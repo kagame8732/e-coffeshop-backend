@@ -21,6 +21,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: mockAuthService,
         },
+        JwtService,
       ],
     }).compile();
 
