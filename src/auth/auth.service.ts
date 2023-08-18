@@ -1,10 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-
 
 @Injectable()
 export class AuthService {
@@ -37,7 +40,7 @@ export class AuthService {
       const userRole = usersCount === 0 ? 1 : 2;
       const userExist = await this.userModel.findOne({ email });
       if (userExist) {
-        throw new BadRequestException('Email already exist');
+        throw new ConflictException('Email already exist');
       }
       const user = await this.userModel.create({
         name,
@@ -78,7 +81,8 @@ export class AuthService {
 
       return { message: `Welcome back ${user.name}. Login successful!`, token };
     } catch (error) {
-      throw new BadRequestException('Internal Server Error');
+      console.log(error);
+      throw new BadRequestException(error.response);
     }
   }
 }
