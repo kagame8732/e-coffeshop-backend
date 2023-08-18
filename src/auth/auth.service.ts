@@ -1,4 +1,4 @@
-import { Injectable,ConflictException,BadRequestException  } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
@@ -13,31 +13,72 @@ export class AuthService {
     private userModel: Model<User>,
     private jwtService: JwtService,
   ) {}
-  async signUp(signUpDto): Promise<{ token: string,message:string,user:any }> {
-   try {
-    const { name, email, password } = signUpDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
+  async signUp(signUpDto): Promise<{ token: string; message: string; user: any}> {
+    try {
+      const { name, email, password } = signUpDto;
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-     // Check if the user table is empty
-     const usersCount = await this.userModel.countDocuments({});
-     // If the user table is empty, the first user to be created will be an admin
-     const userRole = usersCount === 0 ? 1 : 2;
-    const user = await this.userModel.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: userRole,
-    });
 
-    const token = this.jwtService.sign({ id: user._id });
-    return { token ,message:'User created successfully',user};
-   } catch (error) {
-    return error.response;
-   }
+      if (password.length < 6) {
+        throw new BadRequestException('Password must be at least 6 characters');
+      }
+      const emailRegex =
+        /^[a-zA-Z0-9_.+]*[a-zA-Z][a-zA-Z0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/g;
+      const validateEmail = emailRegex.test(email);
+      if (!validateEmail) {
+        throw new BadRequestException('Email is not valid');
+      }
+      
+   
+      // Check if the user table is empty
+      const usersCount = await this.userModel.countDocuments({});
+
+      // If the user table is empty, the first user to be created will be an admin
+      const userRole = usersCount === 0 ? 1 : 2;
+      const userExist = await this.userModel.findOne({ email });
+      if (userExist) {
+        throw new BadRequestException('Email already exist');
+      }
+      const user = await this.userModel.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: userRole,
+      });
+
+      const token = this.jwtService.sign({ id: user._id });
+      return { token, message: 'User created successfully', user };
+    } catch (error) {
+      console.log(error);
+      return error.response;
+    }
   }
 
+  async login(loginDto): Promise<{ token: string; message: string }> {
+    try {
+      const { email, password } = loginDto;
 
+      const user = await this.userModel.findOne({ email });
 
+      if (!user) {
+        throw new BadRequestException('Invalid credentials (email)');
+      }
 
+      const isPasswordValid = await bcrypt.compare(password, user?.password);
 
+      if (!isPasswordValid) {
+        throw new BadRequestException('Invalid credentials (password)');
+      }
+
+      const token = this.jwtService.sign({
+        id: user._id,
+        name: user.email,
+        email: user.email,
+      });
+
+      return { message: `Welcome back ${user.name}. Login successful!`, token };
+    } catch (error) {
+      throw new BadRequestException('Internal Server Error');
+    }
+  }
 }
