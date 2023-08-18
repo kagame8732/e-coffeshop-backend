@@ -1,4 +1,11 @@
-import { IsString, IsEmail, IsNotEmpty, MinLength, IsAlphanumeric, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  IsAlphanumeric,
+  IsNumber,
+} from 'class-validator';
 
 // VALIDATION FOR SIGNUP
 export class SignUpDto {
@@ -11,5 +18,5 @@ export class SignUpDto {
   @MinLength(6)
   password: string;
   @IsNumber()
-  role: number ;
+  role: number;
 }
