@@ -22,7 +22,5 @@ export class PriceData {
 
 export class CreatePaymentDto {
   @ApiProperty()
-  price_data: PriceData
-  @ApiProperty()
-  quantity: number
+  order: string
 };
