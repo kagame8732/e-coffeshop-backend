@@ -35,6 +35,7 @@ describe('AuthController', () => {
         email: 'john@example.com',
         password: 'password123',
         role: 2,
+        secretKey: 'FADGAFDWFYAFDAFDYFYTWAF',
       };
 
       const mockResponse = {
@@ -60,7 +61,8 @@ describe('AuthController', () => {
         name: 'John Doe',
         email: 'john@example.com',
         password: 'password123',
-        role: 2, // Add the role property
+        role: 2,
+        secretKey: 'FADGAFDWFYAFDAFDYFYTWAF', // Add the role property
       };
 
       const errorMessage = 'Something went wrong';
