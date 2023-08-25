@@ -6,9 +6,19 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setDescription('The nest template API description')
+    .setDescription(' ## The e-coffee-shop API description')
     .setVersion('3.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        description: `Please enter token`,
+        name: 'Authorization',
+        bearerFormat: 'Bearer',
+        scheme: 'Bearer',
+        type: 'http',
+        in: 'Header',
+      },
+      'jwt',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

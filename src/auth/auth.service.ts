@@ -56,7 +56,7 @@ export class AuthService {
           role: userRole,
           secretKey: temp_secret,
         });
-        const token = this.jwtService.sign({ id: user._id });
+        const token = this.jwtService.sign({ id: user._id, role: user.role });
         return { token, message: 'User created successfully', user };
       }
     } catch (error) {
@@ -79,8 +79,7 @@ export class AuthService {
       if (user.role === 2) {
         const token = this.jwtService.sign({
           id: user._id,
-          name: user.email,
-          email: user.email,
+          role: user.role,
         });
         return {
           message: `Welcome back ${user.name}. Login successful!`,
@@ -131,9 +130,9 @@ export class AuthService {
       if (verified) {
         const token = this.jwtService.sign({
           id: user._id,
-          name: user.email,
-          email: user.email,
+          role: user.role,
         });
+
         return {
           token: token,
           message: `Welcome back ${user.name}. Login successful!`,

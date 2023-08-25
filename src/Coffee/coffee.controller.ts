@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
 import {
   Controller,
   Post,
@@ -8,17 +6,23 @@ import {
   Param,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CoffeeServices } from './coffee.service';
 import { CreateCoffeeDto } from './create-coffee.dto';
-import { ApiTags,ApiOperation } from '@nestjs/swagger';
+import { ApiTags,ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateCoffeeDto } from './update-coffee.dto';
+import { IsAdmin } from 'src/guards/isAdmin.guard';
 
 @ApiTags('Coffee')
 @Controller('coffee')
 export class CoffeeController {
   constructor(private readonly coffeeService: CoffeeServices) {}
   @ApiOperation({ summary: 'Create a new coffee' })
+  // SWAGGER JWT AUTH
+  @ApiBearerAuth('jwt')
+  // TO USE GUARD FOR CHECKING IF USER IS ADMIN
+  @UseGuards(IsAdmin)
   @Post()
   CreateCoffee(@Body() createCoffeDto: CreateCoffeeDto): any {
     return this.coffeeService.addCoffee(createCoffeDto);
@@ -36,6 +40,8 @@ export class CoffeeController {
     return coffee;
   }
   @ApiOperation({ summary: 'Update a single coffee' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(IsAdmin)
   @Patch(':id')
   async updateCoffee(
     @Param('id') id: string,
@@ -45,6 +51,8 @@ export class CoffeeController {
     return coffee;
   }
   @ApiOperation({ summary: 'Delete a single coffee' })
+  @ApiBearerAuth('jwt')
+  @UseGuards(IsAdmin)
   @Delete(':id')
   async deleteCoffee(
     @Param('id') coffeeId: string,
