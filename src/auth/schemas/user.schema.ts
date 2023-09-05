@@ -10,7 +10,7 @@ export class User {
   email: string;
   @Prop()
   password: string;
-@Prop({ default: 2 })
-role: number;
+  @Prop({ default: 2 })
+  role: number;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

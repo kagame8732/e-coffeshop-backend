@@ -34,7 +34,7 @@ describe('AuthController', () => {
         name: 'John Doe',
         email: 'john@example.com',
         password: 'password123',
-        role: 2, 
+        role: 2,
       };
 
       const mockResponse = {
@@ -64,9 +64,13 @@ describe('AuthController', () => {
       };
 
       const errorMessage = 'Something went wrong';
-      mockAuthService.signUp.mockRejectedValue(new BadRequestException(errorMessage));
+      mockAuthService.signUp.mockRejectedValue(
+        new BadRequestException(errorMessage),
+      );
 
-      await expect(authController.signUp(signUpDto)).rejects.toThrow(BadRequestException);
+      await expect(authController.signUp(signUpDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 });
