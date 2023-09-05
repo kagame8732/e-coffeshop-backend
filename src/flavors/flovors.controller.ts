@@ -1,13 +1,15 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
 import { CreateFlavorDto, ResponseFlavorDto } from './flavors.dto';
 import { FlavorService } from './flavors.service';
-import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiTags, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { IsAdmin } from 'src/guards/isAdmin.guard';
 
 @ApiTags('flavors')
 @Controller('flavors')
 export class FlavorsController {
   constructor(readonly flavorService: FlavorService) {}
-
+  @ApiBearerAuth('jwt')
+  @UseGuards(IsAdmin)
   @Post()
   @ApiCreatedResponse({
     description: 'The record has been successfully created.',

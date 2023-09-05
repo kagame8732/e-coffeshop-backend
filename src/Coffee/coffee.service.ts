@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UpdateCoffeeDto } from './update-coffee.dto';
 
-
 @Injectable()
 export class CoffeeServices {
   private coffee: Coffee[] = [];
@@ -16,17 +15,15 @@ export class CoffeeServices {
     @InjectModel('Coffee') private readonly coffeeModel: Model<Coffee>,
   ) {}
 
-  async addCoffee(
-   createCoffeeDto: CreateCoffeeDto
-  ) {
-    const {name, description, category, price} = createCoffeeDto;
+  async addCoffee(createCoffeeDto: CreateCoffeeDto) {
+    const { name, description, category, price } = createCoffeeDto;
     // Check if a coffee with the same name already exists
     const existingCoffee = await this.coffeeModel.findOne({ name });
-  
+
     if (existingCoffee) {
       throw new Error('A coffee with this name already exists.');
     }
-  
+
     // If no coffee with the same name exists, create and save the new coffee
     const newCoffee = new this.coffeeModel({
       name,
@@ -34,11 +31,10 @@ export class CoffeeServices {
       category,
       price,
     });
-  
+
     const result = await newCoffee.save();
     return result;
   }
-  
 
   async getCoffee() {
     const coffee = await this.coffeeModel.find().exec();
@@ -64,10 +60,8 @@ export class CoffeeServices {
     return coffee;
   }
 
-  async updateCoffee(
-  updateCoffeeDto : UpdateCoffeeDto
-  ) {
-    const {id, name, description, category, price} = updateCoffeeDto;
+  async updateCoffee(updateCoffeeDto: UpdateCoffeeDto) {
+    const { id, name, description, category, price } = updateCoffeeDto;
     const updateCoffee = await this.findCoffee(id);
 
     if (name) {
@@ -91,6 +85,6 @@ export class CoffeeServices {
     if (!coffee) {
       throw new NotFoundException('Coffee not Found');
     }
-    return "Coffee Removed Successfully!"
+    return 'Coffee Removed Successfully!';
   }
 }
