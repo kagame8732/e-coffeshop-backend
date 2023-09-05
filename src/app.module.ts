@@ -7,6 +7,7 @@ import { FlavorModule } from './flavors/flavors.module';
 import { AuthModule } from './auth/auth.module';
 import { CoffeeModule } from './coffee/coffee.module';
 import { PaymentModule } from './payment/payment.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PaymentModule } from './payment/payment.module';
     AuthModule,
     CoffeeModule,
     PaymentModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
