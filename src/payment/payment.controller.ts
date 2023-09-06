@@ -13,8 +13,8 @@ export class PaymentController {
   @ApiBody({
     type: [CreatePaymentDto]
   })
-  create(@Body() createPaymentDto: Array<CreatePaymentDto>) {
-    return this.paymentService.create(createPaymentDto);
+  create(@Body() createPaymentDto: CreatePaymentDto) {
+    return this.paymentService.create(createPaymentDto.order);
   }
 
   @Get()
