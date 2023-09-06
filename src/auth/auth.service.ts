@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   ConflictException,
@@ -54,7 +53,7 @@ export class AuthService {
           email,
           password: hashedPassword,
           role: userRole,
-          secretKey: temp_secret,
+          secretKey: temp_secret.base32,
         });
         const token = this.jwtService.sign({ id: user._id, role: user.role });
         return { token, message: 'User created successfully', user };
