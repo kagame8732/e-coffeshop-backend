@@ -20,7 +20,7 @@ export class IsAdmin implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
-  
+
       if (!token) {
         throw new UnauthorizedException();
       }
