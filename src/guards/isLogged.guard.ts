@@ -29,7 +29,7 @@ export class IsLogged implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
       request['user'] = payload;
-      if (payload.role !== 2) {
+      if (payload.role !== 2 && payload.role !== 1) {
         throw new UnauthorizedException();
       }
 

@@ -30,6 +30,5 @@ import { MailModule } from 'src/mail/mail.module';
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy],
   exports: [PassportModule, JwtModule],
- 
 })
 export class AuthModule {}
