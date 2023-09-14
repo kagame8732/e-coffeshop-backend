@@ -11,6 +11,7 @@ import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IsLogged } from 'src/guards/isLogged.guard';
+import { IsAdmin } from 'src/guards/isAdmin.guard';
 
 @ApiTags('Payment')
 @Controller('payment')
@@ -29,7 +30,9 @@ export class PaymentController {
   }
 
   @Get()
-  @ApiOperation({ description: 'Welcome to payment Endpoint' })
+  @UseGuards(IsAdmin)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ description: 'Get all payment sessions' })
   findAll() {
     return this.paymentService.findAll();
   }

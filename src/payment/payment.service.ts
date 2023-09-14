@@ -66,8 +66,16 @@ export class PaymentService {
     }
   }
 
-  findAll() {
-    return `Welcome to Payment API`;
+  async findAll() {
+    const sessions = await this.stripe.checkout.sessions.list({
+      limit: 10,
+    });
+
+    return {
+      status: 200,
+      message: 'Sessions retrieved successfully!',
+      sessions,
+    };
   }
 
   async success(id: string) {
