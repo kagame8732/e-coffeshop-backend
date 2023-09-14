@@ -19,7 +19,4 @@ export class SignUpDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
-  @ApiProperty({ description: 'The role of the client', default: 2 })
-  @IsNumber()
-  role: number;
 }

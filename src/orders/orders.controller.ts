@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   UseGuards,
+  ExecutionContext,
+  Req,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './schemas/schema.order';
@@ -16,22 +18,24 @@ import { IsLogged } from 'src/guards/isLogged.guard';
 import { IsAdmin } from 'src/guards/isAdmin.guard';
 
 @ApiBearerAuth('jwt')
-@ApiTags()
+@ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
   @ApiOperation({ summary: 'Create a new order' })
   @UseGuards(IsLogged)
   @Post()
-  create(@Body() orderData: CreateOrderDto): Promise<Order> {
-    return this.orderService.createOrder(orderData);
+  create(@Body() orderData: CreateOrderDto, @Req() request): Promise<Order> {
+    const token = request.headers['authorization'];
+    return this.orderService.createOrder(orderData, token);
   }
 
   @ApiOperation({ summary: 'Get all orders' })
-  @UseGuards(IsAdmin)
+  @UseGuards(IsLogged)
   @Get()
-  findAll(): Promise<Order[]> {
-    return this.orderService.findAllOrders();
+  findAll(@Req() request): Promise<Order[]> {
+    const token = request.headers['authorization'];
+    return this.orderService.findAllOrders(token);
   }
 
   @ApiOperation({ summary: 'Get single order' })

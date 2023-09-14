@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { MailService } from '../mail/mail.service';
 import * as bcrypt from 'bcrypt';
+import { SignUpDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -20,10 +21,10 @@ export class AuthService {
     private mailService: MailService,
   ) {}
   async signUp(
-    signUpDto,
+    signUpDto: SignUpDto,
   ): Promise<{ token: string; message: string; user: any }> {
     try {
-      const { name, email, password, secretKey } = signUpDto;
+      const { name, email, password } = signUpDto;
       const hashedPassword = await bcrypt.hash(password, 10);
       const theUser = await this.userModel.findOne({ email });
       if (theUser) {
@@ -40,7 +41,6 @@ export class AuthService {
           email,
           password: hashedPassword,
           role: userRole,
-          secretKey,
         });
 
         const token = this.jwtService.sign({ id: user._id });
@@ -55,7 +55,11 @@ export class AuthService {
           role: userRole,
           secretKey: temp_secret.base32,
         });
-        const token = this.jwtService.sign({ id: user._id, role: user.role });
+        const token = this.jwtService.sign({
+          id: user._id,
+          role: user.role,
+          email: user.email,
+        });
         return { token, message: 'User created successfully', user };
       }
     } catch (error) {
@@ -79,6 +83,7 @@ export class AuthService {
         const token = this.jwtService.sign({
           id: user._id,
           role: user.role,
+          email: user.email,
         });
         return {
           message: `Welcome back ${user.name}. Login successful!`,
@@ -130,6 +135,7 @@ export class AuthService {
         const token = this.jwtService.sign({
           id: user._id,
           role: user.role,
+          email: user.email,
         });
 
         return {
