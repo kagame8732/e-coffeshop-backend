@@ -17,6 +17,12 @@ export class Order {
   @ApiProperty()
   @Prop()
   quantity: number;
+  @ApiProperty()
+  @Prop()
+  payment_url: string;
+  @ApiProperty()
+  @Prop()
+  status: 'completed' | 'failed' | 'pending';
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

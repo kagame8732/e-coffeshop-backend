@@ -5,9 +5,6 @@ export class CreateOrderDto {
   readonly coffee: string;
   @ApiProperty({ description: 'Quantity of order' })
   readonly quantity: number;
-  readonly user: string;
-
-
 }
 
 export class UpdateOrderDto {

@@ -12,16 +12,20 @@ export class OrdersService {
     private jwtService: JwtService,
   ) {}
 
-  async createOrder(orderData: CreateOrderDto,token): Promise<Order> {
-    const  tokenP = token.split(' ')[1];
+  async createOrder(orderData: CreateOrderDto, token): Promise<Order> {
+    const tokenP = token.split(' ')[1];
     const payload = await this.jwtService.verifyAsync(tokenP, {
       secret: process.env.JWT_SECRET,
     });
     const userId = payload.id;
-    const orderWithUser = { ...orderData, user: userId };
+    const orderWithUser = {
+      ...orderData,
+      user: userId,
+      payment_url: '',
+      status: 'pending',
+    };
 
     return this.orderModel.create(orderWithUser);
-
   }
   async findAllOrders(token): Promise<Order[]> {
     const [type, tokenP] = token.split(' ');
@@ -37,14 +41,14 @@ export class OrdersService {
         .exec();
     } else if (payload.role === 2) {
       // If the user is not an admin, return only their own orders
-   const orders = await this.orderModel.find({ user })
-   if (orders.length === 0) {
-     return []}
-    else {
-      return orders
-    }
+      const orders = await this.orderModel.find({ user });
+      if (orders.length === 0) {
+        return [];
+      } else {
+        return orders;
+      }
     } else {
-      throw new Error("Invalid user role");
+      throw new Error('Invalid user role');
     }
   }
 

@@ -25,9 +25,9 @@ export class OrdersController {
   @ApiOperation({ summary: 'Create a new order' })
   @UseGuards(IsLogged)
   @Post()
-  create(@Body() orderData: CreateOrderDto,@Req() request): Promise<Order> {
+  create(@Body() orderData: CreateOrderDto, @Req() request): Promise<Order> {
     const token = request.headers['authorization'];
-    return this.orderService.createOrder(orderData,token);
+    return this.orderService.createOrder(orderData, token);
   }
 
   @ApiOperation({ summary: 'Get all orders' })

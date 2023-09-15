@@ -22,6 +22,9 @@ export class PaymentService {
   async create(createPaymentDto: string) {
     try {
       const uOrder = await this.orderModel.findById(createPaymentDto);
+      if (uOrder.status === 'completed') {
+        return { status: 201, message: 'This order is already paid!' };
+      }
       const uCoffee = await this.coffeeModel.findById(uOrder.coffee);
       const paymentObject = {
         price_data: {
@@ -36,15 +39,23 @@ export class PaymentService {
       };
 
       const SessionConfig: stripe.Checkout.SessionCreateParams = {
-        success_url: this.config.get<string>('SUCCESS_URL'),
+        success_url: `${this.config.get<string>(
+          'SUCCESS_URL',
+        )}/${createPaymentDto}`,
         line_items: [paymentObject],
-        cancel_url: this.config.get<string>('CANCEL_URL'),
+        cancel_url: `${this.config.get<string>(
+          'CANCEL_URL',
+        )}/${createPaymentDto}`,
+        client_reference_id: uOrder.user.toString(),
         mode: 'payment',
       };
       const session = await this.stripe.checkout.sessions.create(SessionConfig);
+
+      uOrder.payment_url = session.url;
+      await uOrder.save();
       return {
         message:
-          'Payment session created successfully!\nFollow the url in response to proceed to payment page',
+          'Payment session created successfully! Follow the url in response to proceed to payment page',
         url: session.url,
       };
     } catch (error) {
@@ -55,15 +66,43 @@ export class PaymentService {
     }
   }
 
-  findAll() {
-    return `Welcome to Payment API`;
+  async findAll() {
+    const sessions = await this.stripe.checkout.sessions.list({
+      limit: 10,
+    });
+
+    return {
+      status: 200,
+      message: 'Sessions retrieved successfully!',
+      sessions,
+    };
   }
 
-  success() {
-    return 'Congratulations, Payment was completed successfully!';
+  async success(id: string) {
+    try {
+      const uOrder = await this.orderModel.findById(id);
+      uOrder.status = 'completed';
+      const updateOrder = await uOrder.save();
+      return {
+        status: 200,
+        message: 'Order Completed Successfully',
+        order: updateOrder,
+      };
+    } catch (error) {
+      console.log(error);
+      return 'Payment was successful, but your order was not updated!';
+    }
   }
 
-  fail() {
-    return 'Payment was canceled!';
+  async fail(id: string) {
+    try {
+      const uOrder = await this.orderModel.findById(id);
+      uOrder.status = 'failed';
+      const updateOrder = await uOrder.save();
+      return { status: 200, message: 'Order Failed', order: updateOrder };
+    } catch (error) {
+      console.log(error);
+      return 'Payment was not successful, and order was not updated!';
+    }
   }
 }
