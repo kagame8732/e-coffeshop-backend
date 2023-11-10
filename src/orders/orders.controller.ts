@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
   UseGuards,
-  ExecutionContext,
   Req,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
@@ -15,7 +14,6 @@ import { Order } from './schemas/schema.order';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateOrderDto, UpdateOrderDto } from './schemas/order.dto';
 import { IsLogged } from 'src/guards/isLogged.guard';
-import { IsAdmin } from 'src/guards/isAdmin.guard';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Orders')
